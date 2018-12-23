@@ -1,18 +1,26 @@
 import requests
+import random
 from bs4 import BeautifulSoup
 
+#store the info
 title = []
-ingredients = []
-instructions = []
+ingredients_list = []
+instruction_lines = []
+ingredients_list_str = []
+instruction_lines_str = []
 
-req = requests.get('https://www.allrecipes.com/recipe/17143')
+#get the recipe information from website (www.allrecipes.com for this version)
+#recipe name
+req = requests.get('https://www.allrecipes.com/recipe/17145')
 soup = BeautifulSoup(req.text, "lxml")
 title += soup.title
+
+#recipe ingredients
 ingredients = soup.find_all('span', {'class' : "recipe-ingred_txt added"})
 ingredients_list = [ingredient.get_text() for ingredient in ingredients]
+ingredients_list_str += [" ".join(ingredients_list)]
+
+#recipe instructions
 instructions = soup.find_all('span', {'class' : "recipe-directions__list--item"})
 instruction_lines = [instruction.get_text() for instruction in instructions]
-
-print("Recipe: " + str(title))
-print("Ingredients: " + str(ingredients_list))
-print("Instructions: " + str(instruction_lines))
+instruction_lines_str += [" ".join(instruction_lines)]
