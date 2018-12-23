@@ -8,9 +8,9 @@ instructions = []
 req = requests.get('https://www.allrecipes.com/recipe/17143')
 soup = BeautifulSoup(req.text, "lxml")
 title += soup.title
-ingredients += soup.find_all('span', {'class' : "recipe-ingred_txt added"})
+ingredients = soup.find_all('span', {'class' : "recipe-ingred_txt added"})
 ingredients_list = [ingredient.get_text() for ingredient in ingredients]
-instructions += soup.find_all('span', {'class' : "recipe-directions__list--item"})
+instructions = soup.find_all('span', {'class' : "recipe-directions__list--item"})
 instruction_lines = [instruction.get_text() for instruction in instructions]
 
 print("Recipe: " + str(title))
