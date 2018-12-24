@@ -1,6 +1,6 @@
 import requests
-import random
 from bs4 import BeautifulSoup
+from docx import Document
 
 #store the info
 title = []
@@ -11,16 +11,22 @@ instruction_lines_str = []
 
 #get the recipe information from website (www.allrecipes.com for this version)
 #recipe name
-req = requests.get('https://www.allrecipes.com/recipe/17145')
+req = requests.get('https://www.allrecipes.com/recipe/17180')
 soup = BeautifulSoup(req.text, "lxml")
-title += soup.title
+title = soup.title.string
 
 #recipe ingredients
 ingredients = soup.find_all('span', {'class' : "recipe-ingred_txt added"})
-ingredients_list = [ingredient.get_text() for ingredient in ingredients]
-ingredients_list_str += [" ".join(ingredients_list)]
+ingredients_list = [ingredient.get_text(separator=", ") for ingredient in ingredients]
+ingredients_list_str = ["\n".join(ingredients_list)]
 
 #recipe instructions
 instructions = soup.find_all('span', {'class' : "recipe-directions__list--item"})
 instruction_lines = [instruction.get_text() for instruction in instructions]
-instruction_lines_str += [" ".join(instruction_lines)]
+instruction_lines_str = [" ".join(instruction_lines)]
+
+document = Document()
+document.add_heading(title, 0)
+document.add_paragraph(ingredients_list, style="List Bullet")
+document.add_paragraph(instruction_lines, style="List Number")
+document.save(str(title)+".xls")
