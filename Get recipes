@@ -2,31 +2,36 @@ import requests
 from bs4 import BeautifulSoup
 from docx import Document
 
-#store the info
-title = []
-ingredients_list = []
-instruction_lines = []
-ingredients_list_str = []
-instruction_lines_str = []
+recipe_number_id = input("What is the recipe number you want to scrape from AllRecipes.com?")
 
 #get the recipe information from website (www.allrecipes.com for this version)
 #recipe name
-req = requests.get('https://www.allrecipes.com/recipe/17180')
+#def get_recipe_info(req):
+req = requests.get('https://www.allrecipes.com/recipe/' + recipe_number_id)
 soup = BeautifulSoup(req.text, "lxml")
+title = []
 title = soup.title.string
 
 #recipe ingredients
+ingredients_list = []
+ingredients_list_str = []
 ingredients = soup.find_all('span', {'class' : "recipe-ingred_txt added"})
-ingredients_list = [ingredient.get_text(separator=", ") for ingredient in ingredients]
-ingredients_list_str = ["\n".join(ingredients_list)]
+ingredients_list = [ingredient.get_text() for ingredient in ingredients]
+ingredients_dict = {recipe_number_id:ingredients_list}
 
 #recipe instructions
+instruction_lines = []
+instruction_lines_str = []
 instructions = soup.find_all('span', {'class' : "recipe-directions__list--item"})
 instruction_lines = [instruction.get_text() for instruction in instructions]
-instruction_lines_str = [" ".join(instruction_lines)]
+instructions_dict = {recipe_number_id:instruction_lines}
+#instruction_lines_str = [" ".join(instruction_lines)]
 
 document = Document()
 document.add_heading(title, 0)
 document.add_paragraph(ingredients_list, style="List Bullet")
 document.add_paragraph(instruction_lines, style="List Number")
 document.save(str(title)+".doc")
+
+print(ingredients_dict)
+print(instructions_dict)
